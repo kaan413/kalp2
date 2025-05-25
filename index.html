@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Heart Animation</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    let canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let ctx = canvas.getContext("2d");
+
+    class Vector {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+      }
+      add(v) {
+        return new Vector(this.x + v.x, this.y + v.y);
+      }
+      subtract(v) {
+        return new Vector(this.x - v.x, this.y - v.y);
+      }
+      scale(s) {
+        return new Vector(this.x * s, this.y * s);
+      }
+    }
+
+    let origin = new Vector(canvas.width / 2, canvas.height / 2);
+    let time = 0;
+
+    function polar(rad, time) {
+      rad += Math.sin(time / 100);
+      let x = 16 * Math.sin(rad) ** 3;
+      let y =
+        13 * Math.cos(rad) -
+        5 * Math.cos(2 * rad) -
+        2 * Math.cos(3 * rad) -
+        Math.cos(4 * rad);
+      let scale = (Math.sin(time / 10) + 3) * 4;
+      return new Vector(x * scale, -y * scale).add(origin);
+    }
+
+    function animate() {
+      time++;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.beginPath();
+      for (let i = 0; i <= Math.PI * 2; i += 0.01) {
+        let p = polar(i, time);
+        ctx.lineTo(p.x, p.y);
+      }
+      ctx.strokeStyle = "red";
+      ctx.shadowColor = "red";
+      ctx.shadowBlur = 20;
+      ctx.stroke();
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
